@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // main route for server's health check
 app.get('/', (req, res) => {
-  res.send('server is running....');
+  res.send('server is running updated....');
 });
 
 app.listen(port, () => {
