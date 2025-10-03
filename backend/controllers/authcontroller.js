@@ -1,49 +1,69 @@
-const bcrypt=require('bcrypt')
-const jwt = require("jsonwebtoken")
-const {generateToken}=require("../utils/generateToken")
-const userModel = require("../models/user")
+const userModel = require("../models/userModel");
+const generateToken = require("../utils/generateToken");
+const bcrypt = require("bcrypt");
 
+module.exports.register = (req, res) => {
+  try {
+    let { email, password } = req.body;
+    //hasing our password using bcrypt
+    bcrypt.genSalt(10, function (err, salt) {
+      bcrypt.hash(password, salt, async function (err, hash) {
+        if (err) {
+          return res.status(500).json({ error: "Error hashing password" });
+        } else {
+          const user = await userModel.findOne({ email });
+          // console.log(user);
+          if (user) {
+            return res.status(400).json({ error: "User already exists" });
+          }
+          let newUser = await userModel.create({
+            email,
+            password: hash,
+          });
 
+          // res.status(201).json({
+          //   success: true,
+          //   message: "User registered successfully",
+          //   newUser,
+          // });
 
-
-module.exports.registerUser = async(req,res)=>{
-    let{email,password,firstname,secondname}=req.body;
-    let user = await userModel.findOne({email})
-    if(user) return res.status(500).send("User already registered")
-
-    bcrypt.genSalt(10,(err,salt)=>{
-        bcrypt.hash(password,salt,async (err,hash)=>{
-            let user = await userModel.create({
-                firstname,
-                email,
-                
-                secondname,
-                password:hash
-
-            })
-            let token = generateToken(user)
-            res.cookie("token",token)
-            res.send("done")
-        })
-    })
-}
-module.exports.loginUser = async(req,res)=>{
-    let{email,password}=req.body;
-    let user = await userModel.findOne({email})
-    if(!user) return res.status(500).send("something went wrong")
-
-    bcrypt.compare(password,user.password,function(err,result){
-        if(result){
-            let token = generateToken(user);
-            res.cookie("token",token)
-            res.status(200).send("you can login")
+          // setting up jwt token
+          let token = generateToken(newUser);
+          // adding cookie in the browser
+          res.cookie("token", token);
+          res.status(200).json({ user: newUser, token });
         }
-        else {
-            res.send("email or password incorrect")
-            res.redirect("/login")}
-    })
-}
-module.exports.logoutUser = (req,res)=>{
-    res.cookie("token","")
-    res.send("you are logged out")
+      });
+    });
+  } catch (error) {
+    console.log(error.message);
+    res
+      .status(500)
+      .json({ error: "An error occurred while registering the user" });
+  }
+};
+
+module.exports.login = async (req, res) => {
+  let { email, password } = req.body;
+
+  let user = await userModel.findOne({ email });
+  if (!user) {
+    return res.status(400).json({ error: "invalid credentials" });
+  }
+  // comparing the password
+  bcrypt.compare(password, user.password, function (err, result) {
+    if(result){
+        let token = generateToken(user);
+        res.cookie("token", token);
+        res.send("you can login")
+    }
+    else{
+      res.status(400).json({ error: "invalid credentials" });
+    }
+  });
+};
+
+module.exports.logout = (req, res) => {
+  res.cookie("token", "");
+  res.redirect("/");
 }
