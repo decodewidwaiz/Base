@@ -3,12 +3,6 @@ const mongoose = require("mongoose");
 //basic owner schema
 const ownerSchema = new mongoose.Schema({
     image:Buffer,
-    fullname: {
-        type: String,
-        minLength: 3,
-        trim: true,
-        required: true
-    },
     email: { 
         type: String,
         unique: true 
