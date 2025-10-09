@@ -13,7 +13,7 @@ app.use(cookieParser());
 
 // Configure CORS to allow requests from frontend origin
 const corsOptions = {
-  origin: 'http://localhost:5173', // frontend origin
+  origin: 'http://localhost:8080', // frontend origin
   credentials: true, // allow session cookies
 };
 app.use(cors(corsOptions));

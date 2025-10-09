@@ -6,7 +6,7 @@ router.use(express.json());
 router.use(express.urlencoded({extended: true}));
 
 
-// Define user-related routes here
+// Define product related routes here
 // router.get('/shop', isLoggedIn, (req, res) => {
 router.get('/shop', (req, res) => {
     res.send('product route is working');

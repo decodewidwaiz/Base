@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const {register, login, logout} = require('../controllers/authController');
+const {register, login, logout} = require('../controllers/authcontroller');
 // const cookieParser = require("cookie-parser");
 router.use(express.json());
 

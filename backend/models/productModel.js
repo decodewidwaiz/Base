@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 //basic product schema
 const productSchema = new mongoose.Schema({
-    image: String,
+    picture: String,
     name: String,
-    price: number,
+    price: Number,
     discount: {
         type:Number,
         default:0

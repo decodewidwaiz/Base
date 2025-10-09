@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 //basic owner schema
 const ownerSchema = new mongoose.Schema({
-    image:Buffer,
     email: { 
         type: String,
         unique: true 
