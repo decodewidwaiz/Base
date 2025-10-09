@@ -1,7 +1,18 @@
-const express=require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
+const ownerModel = require("../models/ownerModel");
+const {register, login, logout} = require('../controllers/ownerController');
+const app = express();
+app.use(express.json())
 
-router.get("/" ,function(req,res){
-    res.send("hey")
-})
-module.exports=router;
+
+// Define user-related routes here
+router.get("/", (req, res) => {
+  res.send("owner route is workinggg");
+});
+
+router.post("/register", register);
+router.post("/login", login);
+router.post("/logout", logout);
+
+module.exports = router;

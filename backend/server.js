@@ -4,35 +4,40 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
-const db = require("./config/mongodbcon")
-const expressSesssion = require("express-session")
-const flash = require("flash")
+const connectDB = require('./config//connectDB');
 
-const port = process.env.BACKEND_PORT || 3000;
+const port = process.env.PORT || 3000;
 
-const ownerRouter = require("./routes/ownerRouter")
-const productRouter= require("./routes/productRouter")
-const userRouter = require("./routes/userRouter")
 
 app.use(cookieParser());
+
+// Configure CORS to allow requests from frontend origin
+const corsOptions = {
+  origin: 'http://localhost:5173', // frontend origin
+  credentials: true, // allow session cookies
+};
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname,'public')));
 
 
-app.use("/owner",ownerRouter)
-app.use("/user",userRouter)
-app.use("/product",productRouter)
+//importing routes
+const userRouter = require('./routes/userRouter');
+const productRouter = require('./routes/productRouter');
+const ownerRouter = require('./routes/ownerRouter');
 
-app.get('/api/health', (req, res) => {
-  res.send('API is healthy');
-});
-
-// main route for server's health check
+// main route for health check
 app.get('/', (req, res) => {
-  res.send('server is running updated....');
+  res.send('server is running....');
 });
 
+
+app.use('/user', userRouter)
+app.use('/product', productRouter)
+app.use('/owner', ownerRouter)
+
+connectDB();
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });

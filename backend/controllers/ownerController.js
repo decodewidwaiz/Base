@@ -1,4 +1,4 @@
-const userModel = require("../models/userModel");
+const ownerModel = require("../models/ownerModel");
 const generateToken = require("../utils/generateToken");
 const bcrypt = require("bcrypt");
 
@@ -11,27 +11,21 @@ module.exports.register = (req, res) => {
         if (err) {
           return res.status(500).json({ error: "Error hashing password" });
         } else {
-          const user = await userModel.findOne({ email });
+          const user = await ownerModel.findOne({ email });
           // console.log(user);
           if (user) {
-            return res.status(400).json({ error: "User already exists" });
+            return res.status(400).json({ error: "owner already exists" });
           }
-          let newUser = await userModel.create({
+          let owner = await ownerModel.create({
             email,
             password: hash,
           });
 
-          // res.status(201).json({
-          //   success: true,
-          //   message: "User registered successfully",
-          //   newUser,
-          // });
-
           // setting up jwt token
-          let token = generateToken(newUser);
+          let token = generateToken(owner);
           // adding cookie in the browser
           res.cookie("token", token);
-          res.status(200).json({ user: newUser, token });
+          res.status(200).json({ owner: owner, token });
         }
       });
     });
@@ -46,14 +40,14 @@ module.exports.register = (req, res) => {
 module.exports.login = async (req, res) => {
   let { email, password } = req.body;
 
-  let user = await userModel.findOne({ email });
-  if (!user) {
+  let owner = await ownerModel.findOne({ email });
+  if (!owner) {
     return res.status(400).json({ error: "invalid credentials" });
   }
   // comparing the password
-  bcrypt.compare(password, user.password, function (err, result) {
+  bcrypt.compare(password, owner.password, function (err, result) {
     if(result){
-        let token = generateToken(user);
+        let token = generateToken(owner);
         res.cookie("token", token);
         res.send("you can login")
     }

@@ -1,16 +1,16 @@
-const express=require("express")
-const router = express.Router()
-const cookieParser = require("cookie-parser")
-const {registerUser,loginUser, logoutUser}= require("../controllers/authcontroller")
+const express = require("express");
+const router = express.Router();
+const {register, login, logout} = require('../controllers/authController');
+// const cookieParser = require("cookie-parser");
+router.use(express.json());
 
+router.get("/", (req, res) => {
+  res.send("User route is working");
+});
 
-router.get("/" ,function(req,res){
-    // res.render("landing.ejs")
-    res.send("user route")
-})
+// Define user-related routes here
+router.post("/register", register);
+router.post("/login", login);
+router.post("/logout", logout);
 
-router.post('/login',loginUser)
-router.post("/logout",logoutUser)
-router.post('/register',registerUser)
-
-module.exports=router;
+module.exports = router;
