@@ -2,45 +2,55 @@ const userModel = require("../models/userModel");
 const generateToken = require("../utils/generateToken");
 const bcrypt = require("bcrypt");
 
-module.exports.register = (req, res) => {
+module.exports.register = async (req, res) => {
   try {
+    // Check if req.body exists
+    if (!req.body) {
+      return res.status(400).json({ error: "Request body is missing" });
+    }
+    
     let {fullname, email, password } = req.body;
-    //hasing our password using bcrypt
-    bcrypt.genSalt(10, function (err, salt) {
-      bcrypt.hash(password, salt, async function (err, hash) {
-        if (err) {
-          return res.status(500).json({ error: "Error hashing password" });
-        } else {
-          const user = await userModel.findOne({ email });
-          // console.log(user);
-          if (user) {
-            return res.status(400).json({ error: "User already exists" });
-          }
-          let newUser = await userModel.create({
-            fullname,
-            email,
-            password: hash,
-          });
+    
+    // Check if required fields are present
+    if (!fullname || !email || !password) {
+      return res.status(400).json({ error: "Fullname, email, and password are required" });
+    }
+    
+    // Check if user already exists
+    const existingUser = await userModel.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+    
+    // Hash the password using bcrypt
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    
+    // Create new user
+    let newUser = await userModel.create({
+      fullname,
+      email,
+      password: hashedPassword,
+    });
 
-          // setting up jwt token
-          let token = generateToken(newUser);
-          // adding cookie in the browser
-          res.cookie("token", token);
-          
-          res.status(201).json({
-            success: true,
-            message: "User registered successfully",
-            user: newUser,
-            token: token
-          });
-        }
-      });
+    // Generate JWT token
+    let token = generateToken(newUser);
+    
+    // Set cookie
+    res.cookie("token", token);
+    
+    res.status(201).json({
+      success: true,
+      message: "User registered successfully",
+      user: {
+        id: newUser._id,
+        fullname: newUser.fullname,
+        email: newUser.email
+      },
+      token: token
     });
   } catch (error) {
-    console.log(error.message);
-    res
-      .status(500)
-      .json({ error: "An error occurred while registering the user" });
+    res.status(500).json({ error: "An error occurred while registering the user" });
   }
 };
 

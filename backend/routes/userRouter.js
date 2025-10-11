@@ -4,7 +4,6 @@ const isloggedin = require("../middleware/isloggedin");
 const {register, login, logout} = require('../controllers/authcontroller');
 const {cart} = require('../controllers/userController');
 const {useraddress, addtocart, removefromcart} = require("../controllers/userController");
-router.use(express.json());
 
 router.get("/", (req, res) => {
   res.send("User route is working");
@@ -14,12 +13,11 @@ router.get("/", (req, res) => {
 router.post("/register", register);
 router.post("/login", login);
 router.post("/logout", logout);
-router.get("/cart", cart);
-router.post("/address",useraddress)
-router.post("/addtocart/:productid",addtocart);
-router.delete("/cart/:productid",removefromcart);
 
-
-
+// Protected routes - require authentication
+router.get("/cart", isloggedin, cart);
+router.post("/address", isloggedin, useraddress);
+router.post("/addtocart/:productid", isloggedin, addtocart);
+router.delete("/cart/:productid", isloggedin, removefromcart);
 
 module.exports = router;

@@ -63,10 +63,18 @@ module.exports.cart = async (req, res) => {
 }
 module.exports.useraddress=async function(req, res) {
     try {
-        const { userId, street, city, state, postalCode, country } = req.body;
+        // Verify authentication
+        if (!req.user || !req.user.email) {
+            return res.status(401).json({
+                success: false,
+                message: "User not authenticated"
+            });
+        }
+
+        const { street, city, state, postalCode, country, contact } = req.body;
 
         // Validate required fields
-        if (!userId || !street || !city || !state || !postalCode || !country) {
+        if (!street || !city || !state || !postalCode || !country || !contact) {
             return res.status(400).json({
                 success: false,
                 message: "All address fields are required"
@@ -74,14 +82,15 @@ module.exports.useraddress=async function(req, res) {
         }
 
         // Find and update user with new address
-        const user = await userModel.findByIdAndUpdate(
-            userId,
+        const user = await userModel.findOneAndUpdate(
+            { email: req.user.email },
             {
                 address: {
                     street,
                     city,
                     state,
                     postalCode,
+                    contact,
                     country
                 }
             },
@@ -120,7 +129,7 @@ module.exports.useraddress=async function(req, res) {
 };
 module.exports.addtocart=async (req, res) => {
   try {
-    // Verify authentication
+    //Verify authentication
     if (!req.user || !req.user.email) {
       return res.status(401).json({
         success: false,

@@ -1,5 +1,5 @@
-import { cloudinary } from "../config/cloudinary.js"; // Import cloudinary instance
-import Product from "../models/productModel.js";
+const { cloudinary } = require("../config/cloudinary.js"); // Import cloudinary instance
+const Product = require("../models/productModel.js");
 
 
 // Helper function to validate required fields
@@ -15,7 +15,7 @@ const validateProductFields = (name, description, price, stock) => {
 
 // --- OWNER ENDPOINTS ---
 
-export const createProduct = async (req, res) => {
+const createProduct = async (req, res) => {
     try {
         const { name, description, price, stock, discount, bgColor, panelColor, textColor } = req.body;
         const file = req.file; // Multer with Cloudinary storage puts file info here
@@ -61,7 +61,7 @@ export const createProduct = async (req, res) => {
     }
 };
 
-export const updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: "Product not found" });
@@ -94,7 +94,7 @@ export const updateProduct = async (req, res) => {
     }
 };
 
-export const deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: "Product not found" });
@@ -116,7 +116,7 @@ export const deleteProduct = async (req, res) => {
 
 // --- PUBLIC (CUSTOMER) ENDPOINTS ---
 
-export const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res) => {
     try {
         // Fetch all products, possibly with pagination/filtering later
         const products = await Product.find({});
@@ -127,7 +127,7 @@ export const getAllProducts = async (req, res) => {
     }
 };
 
-export const getProductDetails = async (req, res) => {
+const getProductDetails = async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) return res.status(404).json({ message: "Product not found" });
@@ -138,4 +138,12 @@ export const getProductDetails = async (req, res) => {
         // Mongoose cast errors (invalid ID format) are common here
         res.status(400).json({ message: "Invalid product ID or request failed." });
     }
+};
+
+module.exports = {
+    createProduct,
+    updateProduct,
+    deleteProduct,
+    getAllProducts,
+    getProductDetails
 };
