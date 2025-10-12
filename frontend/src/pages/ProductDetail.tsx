@@ -2,20 +2,92 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ShoppingCart, ArrowLeft } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
-import { products } from '@/data/products';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { useState, useEffect } from 'react';
+
+// Define the backend product interface
+interface BackendProduct {
+  _id: string;
+  name: string;
+  price: number;
+  description?: string;
+  image?: {
+    url: string;
+  };
+  stock?: number;
+  discount?: number;
+  bgColor?: string;
+  panelColor?: string;
+  textColor?: string;
+  category?: string;
+  __v?: number;
+}
 
 const ProductDetail = () => {
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { user } = useAuth();
   
-  // Note: product IDs are usually numbers, ensure your actual data matches the comparison type (id === p.id)
-  const product = products.find(p => p.id === id); 
+  const [product, setProduct] = useState<BackendProduct | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch product details from backend
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`http://localhost:3000/product/product/${id}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch product details');
+        }
+        const data = await response.json();
+        setProduct(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to load product details. Please try again later.');
+        console.error('Error fetching product:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchProduct();
+    }
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="container py-12 text-center bg-gradient-to-br from-stone-100 via-amber-50 to-stone-100 min-h-[calc(100vh-64px)]">
+          <p className="text-xl text-amber-900">Loading product details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen">
+        <Header />
+        <div className="container py-12 text-center bg-gradient-to-br from-stone-100 via-amber-50 to-stone-100 min-h-[calc(100vh-64px)]">
+          <p className="text-xl text-red-500">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-amber-600 hover:bg-amber-700"
+          >
+            Retry
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -34,7 +106,19 @@ const ProductDetail = () => {
       navigate('/login');
       return;
     }
-    addToCart(product);
+    
+    // Map backend product to cart product interface
+    const cartProduct = {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      description: product.description || '',
+      image: product.image?.url || '',
+      category: product.category || 'general',
+      stock: product.stock || 0,
+    };
+    
+    addToCart(cartProduct);
     toast.success(`${product.name} added to cart`);
   };
 
@@ -44,7 +128,19 @@ const ProductDetail = () => {
       navigate('/login');
       return;
     }
-    addToCart(product);
+    
+    // Map backend product to cart product interface
+    const cartProduct = {
+      id: product._id,
+      name: product.name,
+      price: product.price,
+      description: product.description || '',
+      image: product.image?.url || '',
+      category: product.category || 'general',
+      stock: product.stock || 0,
+    };
+    
+    addToCart(cartProduct);
     navigate('/cart');
   };
 
@@ -69,7 +165,7 @@ const ProductDetail = () => {
             {/* Image Section */}
             <div className="aspect-square overflow-hidden rounded-lg shadow-xl border border-amber-300">
               <img
-                src={product.image}
+                src={product.image?.url || '/placeholder-image.jpg'}
                 alt={product.name}
                 className="h-full w-full object-cover"
               />
@@ -81,7 +177,7 @@ const ProductDetail = () => {
               <Badge 
                 className="mb-4 bg-amber-200 text-amber-800 hover:bg-amber-300/80 font-semibold uppercase tracking-wider"
               >
-                {product.category}
+                {product.category || 'Uncategorized'}
               </Badge>
 
               {/* 2. Title Text Color */}
@@ -101,7 +197,7 @@ const ProductDetail = () => {
                 </h2>
                 {/* 2. Description Content Text Color */}
                 <p className="text-lg text-amber-700 leading-relaxed">
-                  {product.description}
+                  {product.description || 'No description available'}
                 </p>
               </div>
 
@@ -110,7 +206,7 @@ const ProductDetail = () => {
                 <p className="text-md text-amber-600">
                   Stock: 
                   <span className="font-bold text-amber-800 ml-1">
-                    {product.stock} units available
+                    {product.stock !== undefined ? product.stock : 'N/A'} units available
                   </span>
                 </p>
               </div>
