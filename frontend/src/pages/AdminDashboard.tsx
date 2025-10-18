@@ -28,7 +28,7 @@ const AdminDashboard = () => {
     price: '',
     description: '',
     image: '',
-    category: '',
+    category: '', // Changed from discount to category
     stock: ''
   });
 
@@ -93,7 +93,7 @@ const AdminDashboard = () => {
       price: '',
       description: '',
       image: '',
-      category: '',
+      category: '', // Changed from discount to category
       stock: ''
     });
     setProductFormOpen(true);
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
       price: product.price.toString(),
       description: product.description,
       image: product.image,
-      category: product.category,
+      category: product.category, // Changed from discount to category
       stock: product.stock.toString()
     });
     setProductFormOpen(true);
@@ -123,7 +123,7 @@ const AdminDashboard = () => {
   };
 
   const handleSaveProduct = () => {
-    if (!formData.name || !formData.price || !formData.description || !formData.category || !formData.stock) {
+    if (!formData.name || !formData.price || !formData.description || !formData.category || !formData.stock) { // Changed from discount to category
       toast({
         title: "Error",
         description: "Please fill in all fields.",
@@ -138,10 +138,10 @@ const AdminDashboard = () => {
       price: parseFloat(formData.price),
       description: formData.description,
       image: formData.image || 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500&h=500&fit=crop',
-      category: formData.category,
+      category: formData.category, // Changed from discount to category
       stock: parseInt(formData.stock)
     };
-
+    
     let updatedProducts;
     if (editingProduct) {
       updatedProducts = products.map(p => p.id === editingProduct.id ? productData : p);
@@ -235,7 +235,7 @@ const AdminDashboard = () => {
                   <TableRow>
                     <TableHead>Image</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Category</TableHead>
+                    <TableHead>Category</TableHead> {/* Changed from Discount to Category */}
                     <TableHead>Price</TableHead>
                     <TableHead>Stock</TableHead>
                     <TableHead className="text-right">Actions</TableHead>
@@ -376,12 +376,12 @@ const AdminDashboard = () => {
               </div>
             </div>
             <div>
-              <Label htmlFor="category">Category</Label>
+              <Label htmlFor="category">Category</Label> {/* Changed from discount to category */}
               <Input
-                id="category"
-                value={formData.category}
-                onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                placeholder="e.g., Electronics, Accessories"
+                id="category" // Changed from discount to category
+                value={formData.category} // Changed from discount to category
+                onChange={(e) => setFormData({ ...formData, category: e.target.value })} // Changed from discount to category
+                placeholder="Enter product category"
               />
             </div>
             <div>

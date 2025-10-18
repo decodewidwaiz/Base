@@ -16,12 +16,12 @@ const Login = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await login(email, password);
-    if (success) {
+    const result = await login(email, password);
+    if (result.success) {
       toast.success('Login successful!');
       navigate('/shop');
     } else {
-      toast.error('Login failed. Please try again.');
+      toast.error(result.error || 'Login failed. Please try again.');
     }
   };
 

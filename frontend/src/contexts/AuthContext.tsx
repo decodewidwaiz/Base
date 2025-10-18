@@ -3,24 +3,35 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 interface User {
   id: string;
   email: string;
-  name: string;
+  fullname: string;
+}
+
+interface Owner {
+  id: string;
+  email: string;
+  fullname: string;
 }
 
 interface AuthContextType {
   user: User | null;
   isAdmin: boolean;
-  login: (email: string, password: string) => Promise<boolean>;
-  signup: (email: string, password: string, name: string) => Promise<boolean>;
-  adminLogin: (email: string, password: string) => Promise<boolean>;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  signup: (email: string, password: string, name: string) => Promise<{ success: boolean; error?: string }>;
+  adminLogin: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(() => {
-    const saved = localStorage.getItem('user');
-    return saved ? JSON.parse(saved) : null;
+    const savedUser = localStorage.getItem('user');
+    const savedToken = localStorage.getItem('token');
+    
+    if (savedUser && savedToken) {
+      return JSON.parse(savedUser);
+    }
+    return null;
   });
 
   const [isAdmin, setIsAdmin] = useState(() => {
@@ -40,49 +51,135 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, [isAdmin]);
 
   const login = async (email: string, password: string) => {
-    // Mock login - in real app, this would call your API
-    const mockUser = {
-      id: '1',
-      email,
-      name: email.split('@')[0],
-    };
-    setUser(mockUser);
-    setIsAdmin(false);
-    return true;
+    try {
+      const response = await fetch('http://localhost:3000/user/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // Include cookies in the request
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.user) {
+        const userData = {
+          id: data.user._id,
+          email: data.user.email,
+          fullname: data.user.fullname,
+        };
+        
+        setUser(userData);
+        setIsAdmin(false);
+        
+        // Store token if provided
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || 'Login failed' };
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
   };
 
   const signup = async (email: string, password: string, name: string) => {
-    // Mock signup - in real app, this would call your API
-    const mockUser = {
-      id: Date.now().toString(),
-      email,
-      name,
-    };
-    setUser(mockUser);
-    setIsAdmin(false);
-    return true;
+    try {
+      const response = await fetch('http://localhost:3000/user/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ fullname: name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.user) {
+        const userData = {
+          id: data.user.id,
+          email: data.user.email,
+          fullname: data.user.fullname,
+        };
+        
+        setUser(userData);
+        setIsAdmin(false);
+        
+        // Store token if provided
+        if (data.token) {
+          localStorage.setItem('token', data.token);
+        }
+        
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || 'Signup failed' };
+      }
+    } catch (error) {
+      console.error('Signup error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
+    }
   };
 
   const adminLogin = async (email: string, password: string) => {
-    // Mock admin login - in real app, validate against backend
-    if (email === 'admin@shop.com' && password === 'admin123') {
-      const adminUser = {
-        id: 'admin',
-        email,
-        name: 'Admin',
-      };
-      setUser(adminUser);
-      setIsAdmin(true);
-      return true;
+    try {
+      const response = await fetch('http://localhost:3000/owner/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+        credentials: 'include', // Include cookies in the request
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.owner) {
+        const ownerData = {
+          id: data.owner._id,
+          email: data.owner.email,
+          fullname: data.owner.fullname,
+        };
+        
+        setUser(ownerData);
+        setIsAdmin(true);
+        
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || 'Admin login failed' };
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
+      return { success: false, error: 'Network error. Please try again.' };
     }
-    return false;
   };
 
-  const logout = () => {
-    setUser(null);
-    setIsAdmin(false);
-    localStorage.removeItem('user');
-    localStorage.removeItem('isAdmin');
+  const logout = async () => {
+    try {
+      // Determine which logout endpoint to call based on user type
+      const logoutEndpoint = isAdmin 
+        ? 'http://localhost:3000/owner/logout' 
+        : 'http://localhost:3000/user/logout';
+      
+      // Call backend logout endpoint
+      await fetch(logoutEndpoint, {
+        method: 'POST',
+        credentials: 'include', // Include cookies in the request
+      });
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      // Clear local state regardless of backend call success
+      setUser(null);
+      setIsAdmin(false);
+      localStorage.removeItem('user');
+      localStorage.removeItem('token');
+      localStorage.removeItem('isAdmin');
+    }
   };
 
   return (

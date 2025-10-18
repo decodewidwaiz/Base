@@ -17,12 +17,12 @@ const Signup = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await signup(email, password, name);
-    if (success) {
+    const result = await signup(email, password, name);
+    if (result.success) {
       toast.success('Account created successfully!');
       navigate('/shop');
     } else {
-      toast.error('Signup failed. Please try again.');
+      toast.error(result.error || 'Signup failed. Please try again.');
     }
   };
 

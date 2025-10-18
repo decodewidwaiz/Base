@@ -17,12 +17,12 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = await adminLogin(email, password);
-    if (success) {
+    const result = await adminLogin(email, password);
+    if (result.success) {
       toast.success('Admin login successful!');
       navigate('/admin/dashboard');
     } else {
-      toast.error('Invalid admin credentials');
+      toast.error(result.error || 'Invalid admin credentials');
     }
   };
 
@@ -39,9 +39,9 @@ const AdminLogin = () => {
                 <Shield className="h-6 w-6 text-amber-800" />
                 <h2 className="text-3xl font-bold text-amber-900">Admin Access</h2>
               </div>
-              <p className="text-amber-700">
+              {/* <p className="text-amber-700">
                 Demo credentials: admin@shop.com / admin123
-              </p>
+              </p> */}
             </div>
 
             {/* Form Content */}

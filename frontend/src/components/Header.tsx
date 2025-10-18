@@ -68,7 +68,7 @@ export const Header = () => {
                   </Button>
                 </Link>
               )}
-              <span className="text-sm font-medium text-amber-800">{user.name}</span>
+              <span className="text-sm font-medium text-amber-800">{user.fullname}</span>
               <Button 
                 variant="ghost" 
                 size="icon" 
