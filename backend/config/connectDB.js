@@ -11,15 +11,23 @@ const connectDB = async () => {
     }
 
     try {
+        // Check if MONGODB_URI is defined
+        if (!process.env.MONGODB_URI) {
+            throw new Error("MONGODB_URI is not defined in environment variables");
+        }
+        
         const conn = await mongoose.connect(process.env.MONGODB_URI, {
             // Remove deprecated options
         });
         
         isConnected = true;
         console.log("MongoDB connected successfully");
+        return conn;
     } catch (error) {
         console.error("MongoDB connection failed:", error.message);
-        process.exit(1);
+        // Don't exit the process in a serverless environment
+        // Just log the error and let the application handle it
+        throw error;
     }
 }
 

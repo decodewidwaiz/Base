@@ -6,8 +6,11 @@ const path = require('path');
 require('dotenv').config();
 const connectDB = require('./config/connectDB');
 
-// Connect to database
-connectDB();
+// Connect to database with error handling
+connectDB().catch(err => {
+  console.error("Failed to connect to database:", err.message);
+  // Continue running the server even if DB connection fails
+});
 
 app.use(cookieParser());
 
@@ -15,7 +18,9 @@ app.use(cookieParser());
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:5173',
-  'https://base-nine-sage.vercel.app' // Your frontend domain
+  'https://base-nine-sage.vercel.app', // Your actual backend domain
+  'https://basse-khaki.vercel.app', // Frontend domain with typo
+  'https://base-khaki.vercel.app' // Frontend domain (if this is the correct one)
 ];
 
 const corsOptions = {
@@ -29,10 +34,23 @@ const corsOptions = {
   },
   credentials: true, // allow session cookies
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  exposedHeaders: ['Authorization'] // Expose any headers that the frontend needs to access
 };
 
 app.use(cors(corsOptions));
+
+// Additional CORS headers middleware (only for Vercel edge cases)
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+  res.header('Access-Control-Allow-Credentials', true);
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  next();
+});
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
