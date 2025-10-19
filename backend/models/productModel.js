@@ -10,9 +10,9 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
-    bgColor: String,
-    panelColor: String,
-    textColor: String,
+    bgColor: String || optional,
+    panelColor: String || optional,
+    textColor: String || optional,
     image: {
         public_id: String,
         url: String
