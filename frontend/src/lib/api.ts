@@ -1,5 +1,5 @@
 // API configuration file
-const API_BASE_URL = 'https://base-nu-six.vercel.app';
+const API_BASE_URL = 'https://base-nine-sage.vercel.app';
 
 export const API_ENDPOINTS = {
   // User endpoints

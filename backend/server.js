@@ -15,7 +15,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:5173',
-  'https://basse-khaki.vercel.app' // Your frontend domain
+  'https://base-nine-sage.vercel.app' // Your frontend domain
 ];
 
 const corsOptions = {
