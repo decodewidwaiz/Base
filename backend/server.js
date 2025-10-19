@@ -4,25 +4,41 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 require('dotenv').config();
-const connectDB = require('./config//connectDB');
+const connectDB = require('./config/connectDB');
 
-const port = process.env.PORT || 3000;
-
+// Connect to database
+connectDB();
 
 app.use(cookieParser());
 
 // Configure CORS to allow requests from frontend origin
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://localhost:5173',
+  'https://your-frontend-domain.vercel.app', // Add your actual frontend domain
+  'https://your-domain.com' // Add your custom domain if you have one
+];
+
 const corsOptions = {
-  origin: 'http://localhost:8080', // frontend origin
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true, // allow session cookies
 };
+
 app.use(cors(corsOptions));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-
-//importing routes
+// importing routes
 const userRouter = require('./routes/userRouter');
 const productRouter = require('./routes/productRouter');
 const ownerRouter = require('./routes/ownerRouter');
@@ -32,12 +48,16 @@ app.get('/', (req, res) => {
   res.send('server is running....');
 });
 
-
 app.use('/user', userRouter)
 app.use('/product', productRouter)
 app.use('/owner', ownerRouter)
 
-connectDB();
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack)
+  res.status(500).send({ error: 'Something went wrong!', message: err.message })
+})
+
+// For Vercel serverless functions, we need to export the app
+// Vercel will handle listening
+module.exports = app;
