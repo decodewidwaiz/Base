@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app//user/login', {
+      const response = await fetch('https://base-git-dev-waizalam90s-projects.vercel.app//user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app//user/register', {
+      const response = await fetch('https://base-git-dev-waizalam90s-projects.vercel.app//user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const adminLogin = async (email: string, password: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app//owner/login', {
+      const response = await fetch('https://base-git-dev-waizalam90s-projects.vercel.app//owner/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -163,7 +163,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Determine which logout endpoint to call based on user type
       const logoutEndpoint = isAdmin 
         ? '/owner/logout' 
-        : 'https://base-nu-six.vercel.app//user/logout';
+        : 'https://base-git-dev-waizalam90s-projects.vercel.app//user/logout';
       
       // Call backend logout endpoint
       await fetch(logoutEndpoint, {

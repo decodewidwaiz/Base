@@ -69,7 +69,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://base-nu-six.vercel.app//product/shop");
+        const response = await fetch("https://base-git-dev-waizalam90s-projects.vercel.app//product/shop");
         if (response.ok) {
           const data = await response.json();
           // Map backend data to frontend Product type
@@ -183,7 +183,7 @@ const AdminDashboard = () => {
   const handleDeleteProduct = async (productId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://base-nu-six.vercel.app//product/deleteproduct/${productId}`, {
+      const response = await fetch(`https://base-git-dev-waizalam90s-projects.vercel.app//product/deleteproduct/${productId}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -263,8 +263,8 @@ const AdminDashboard = () => {
       }
 
       const url = editingProduct 
-        ? `https://base-nu-six.vercel.app//product/updateproduct/${editingProduct.id}`
-        : "https://base-nu-six.vercel.app//product/createproduct";
+        ? `https://base-git-dev-waizalam90s-projects.vercel.app//product/updateproduct/${editingProduct.id}`
+        : "https://base-git-dev-waizalam90s-projects.vercel.app//product/createproduct";
 
       const response = await fetch(url, {
         method: editingProduct ? "POST" : "POST",
@@ -275,7 +275,7 @@ const AdminDashboard = () => {
         const result = await response.json();
         
         // Refresh products list
-        const responseProducts = await fetch("https://base-nu-six.vercel.app//product/shop");
+        const responseProducts = await fetch("https://base-git-dev-waizalam90s-projects.vercel.app//product/shop");
         if (responseProducts.ok) {
           const data = await responseProducts.json();
           const mappedProducts: Product[] = data.map((product: any) => ({

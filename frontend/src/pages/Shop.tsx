@@ -35,7 +35,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://base-nu-six.vercel.app//product/shop');
+        const response = await fetch('https://base-git-dev-waizalam90s-projects.vercel.app//product/shop');
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
