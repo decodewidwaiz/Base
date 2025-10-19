@@ -37,7 +37,7 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`base-ecvtj2kox-waizalam90s-projects.vercel.app/product/product/${id}`);
+        const response = await fetch(`https://base-nu-six.vercel.app//product/product/${id}`);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
@@ -62,7 +62,7 @@ const ProductDetail = () => {
 
     const fetchRecommendations = async (category: string, currentId: string) => {
       try {
-        const response = await fetch(`base-ecvtj2kox-waizalam90s-projects.vercel.app/product/products`);
+        const response = await fetch(`https://base-nu-six.vercel.app//product/products`);
         if (response.ok) {
           const data = await response.json();
           const filtered = data
