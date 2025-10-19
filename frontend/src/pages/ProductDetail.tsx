@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
+import { API_ENDPOINTS, apiClient } from '@/lib/api';
 
 interface Product {
   _id: string;
@@ -37,7 +38,7 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`https://base-nu-six.vercel.app/product/product/${id}`);
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCT_DETAILS(id || ''));
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
@@ -62,7 +63,7 @@ const ProductDetail = () => {
 
     const fetchRecommendations = async (category: string, currentId: string) => {
       try {
-        const response = await fetch(`https://base-nu-six.vercel.app/product/products`);
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
         if (response.ok) {
           const data = await response.json();
           const filtered = data

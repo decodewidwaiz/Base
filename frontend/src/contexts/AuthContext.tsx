@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { API_ENDPOINTS, apiClient } from '@/lib/api';
 
 interface User {
   id: string;
@@ -52,14 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app/user/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include', // Include cookies in the request
-      });
+      const response = await apiClient.post(API_ENDPOINTS.USER_LOGIN, { email, password });
 
       const data = await response.json();
 
@@ -90,13 +84,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app/user/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ fullname: name, email, password }),
-      });
+      const response = await apiClient.post(API_ENDPOINTS.USER_REGISTER, { fullname: name, email, password });
 
       const data = await response.json();
 
@@ -127,14 +115,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const adminLogin = async (email: string, password: string) => {
     try {
-      const response = await fetch('https://base-nu-six.vercel.app/owner/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-        credentials: 'include', // Include cookies in the request
-      });
+      const response = await apiClient.post(API_ENDPOINTS.OWNER_LOGIN, { email, password });
 
       const data = await response.json();
 
@@ -162,14 +143,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Determine which logout endpoint to call based on user type
       const logoutEndpoint = isAdmin 
-        ? '/owner/logout' 
-        : 'https://base-nu-six.vercel.app/user/logout';
+        ? API_ENDPOINTS.OWNER_LOGOUT 
+        : API_ENDPOINTS.USER_LOGOUT;
       
       // Call backend logout endpoint
-      await fetch(logoutEndpoint, {
-        method: 'POST',
-        credentials: 'include', // Include cookies in the request
-      });
+      await apiClient.post(logoutEndpoint);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

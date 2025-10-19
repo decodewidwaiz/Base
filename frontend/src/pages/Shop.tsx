@@ -4,6 +4,7 @@ import { ProductCard } from '@/components/ProductCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search } from 'lucide-react';
+import { API_ENDPOINTS, apiClient } from '@/lib/api';
 
 // Define the backend product interface
 interface BackendProduct {
@@ -35,7 +36,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('https://base-nu-six.vercel.app/product/shop');
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

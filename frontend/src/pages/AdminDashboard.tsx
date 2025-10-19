@@ -34,6 +34,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { API_ENDPOINTS, apiClient } from "@/lib/api";
 
 const AdminDashboard = () => {
   const { isAdmin } = useAuth();
@@ -69,7 +70,7 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://base-nu-six.vercel.app/product/shop");
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
         if (response.ok) {
           const data = await response.json();
           // Map backend data to frontend Product type
@@ -78,7 +79,7 @@ const AdminDashboard = () => {
             name: product.name,
             price: product.price,
             description: product.description,
-            image: product.image.url,
+            image: product.image?.url || product.image || "",
             category: product.category || "General",
             stock: product.stock
           }));
@@ -183,12 +184,7 @@ const AdminDashboard = () => {
   const handleDeleteProduct = async (productId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://base-nu-six.vercel.app/product/deleteproduct/${productId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
+      const response = await apiClient.post(API_ENDPOINTS.PRODUCT_DELETE(productId));
       
       if (response.ok) {
         const updatedProducts = products.filter((p) => p.id !== productId);
@@ -263,8 +259,8 @@ const AdminDashboard = () => {
       }
 
       const url = editingProduct 
-        ? `https://base-nu-six.vercel.app/product/updateproduct/${editingProduct.id}`
-        : "https://base-nu-six.vercel.app/product/createproduct";
+        ? API_ENDPOINTS.PRODUCT_UPDATE(editingProduct.id)
+        : API_ENDPOINTS.PRODUCT_CREATE;
 
       const response = await fetch(url, {
         method: editingProduct ? "POST" : "POST",
@@ -275,7 +271,7 @@ const AdminDashboard = () => {
         const result = await response.json();
         
         // Refresh products list
-        const responseProducts = await fetch("https://base-nu-six.vercel.app/product/shop");
+        const responseProducts = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
         if (responseProducts.ok) {
           const data = await responseProducts.json();
           const mappedProducts: Product[] = data.map((product: any) => ({
@@ -283,7 +279,7 @@ const AdminDashboard = () => {
             name: product.name,
             price: product.price,
             description: product.description,
-            image: product.image.url,
+            image: product.image?.url || product.image || "",
             category: product.category || "General",
             stock: product.stock
           }));
