@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3000/user/login', {
+      const response = await fetch('base-ecvtj2kox-waizalam90s-projects.vercel.app/user/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, name: string) => {
     try {
-      const response = await fetch('http://localhost:3000/user/register', {
+      const response = await fetch('base-ecvtj2kox-waizalam90s-projects.vercel.app/user/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -127,7 +127,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const adminLogin = async (email: string, password: string) => {
     try {
-      const response = await fetch('http://localhost:3000/owner/login', {
+      const response = await fetch('base-ecvtj2kox-waizalam90s-projects.vercel.app/owner/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -162,8 +162,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       // Determine which logout endpoint to call based on user type
       const logoutEndpoint = isAdmin 
-        ? 'http://localhost:3000/owner/logout' 
-        : 'http://localhost:3000/user/logout';
+        ? 'base-ecvtj2kox-waizalam90s-projects.vercel.app/owner/logout' 
+        : 'base-ecvtj2kox-waizalam90s-projects.vercel.app/user/logout';
       
       // Call backend logout endpoint
       await fetch(logoutEndpoint, {

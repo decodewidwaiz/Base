@@ -35,7 +35,7 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await fetch('http://localhost:3000/product/shop');
+        const response = await fetch('base-ecvtj2kox-waizalam90s-projects.vercel.app/product/shop');
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }
