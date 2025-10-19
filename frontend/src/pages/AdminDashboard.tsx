@@ -70,7 +70,8 @@ const AdminDashboard = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
+        // For admin dashboard, we still need to fetch products (public endpoint)
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP, false);
         if (response.ok) {
           const data = await response.json();
           // Map backend data to frontend Product type
@@ -184,7 +185,8 @@ const AdminDashboard = () => {
   const handleDeleteProduct = async (productId: string) => {
     try {
       setLoading(true);
-      const response = await apiClient.post(API_ENDPOINTS.PRODUCT_DELETE(productId));
+      // For product deletion, we need to include credentials as it's an admin operation
+      const response = await apiClient.post(API_ENDPOINTS.PRODUCT_DELETE(productId), undefined, true);
       
       if (response.ok) {
         const updatedProducts = products.filter((p) => p.id !== productId);
@@ -262,16 +264,18 @@ const AdminDashboard = () => {
         ? API_ENDPOINTS.PRODUCT_UPDATE(editingProduct.id)
         : API_ENDPOINTS.PRODUCT_CREATE;
 
+      // For product creation/update, we need to include credentials as it's an admin operation
       const response = await fetch(url, {
         method: editingProduct ? "POST" : "POST",
-        body: productData
+        body: productData,
+        credentials: 'include'
       });
 
       if (response.ok) {
         const result = await response.json();
         
         // Refresh products list
-        const responseProducts = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
+        const responseProducts = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP, false);
         if (responseProducts.ok) {
           const data = await responseProducts.json();
           const mappedProducts: Product[] = data.map((product: any) => ({

@@ -15,22 +15,21 @@ app.use(cookieParser());
 const allowedOrigins = [
   'http://localhost:8080',
   'http://localhost:5173',
-  'https://your-frontend-domain.vercel.app', // Add your actual frontend domain
-  'https://your-domain.com' // Add your custom domain if you have one
+  'https://basse-khaki.vercel.app' // Your frontend domain
 ];
 
 const corsOptions = {
   origin: function (origin, callback) {
     // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true, // allow session cookies
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 };
 
 app.use(cors(corsOptions));
@@ -48,15 +47,15 @@ app.get('/', (req, res) => {
   res.send('server is running....');
 });
 
-app.use('/user', userRouter)
-app.use('/product', productRouter)
-app.use('/owner', ownerRouter)
+app.use('/user', userRouter);
+app.use('/product', productRouter);
+app.use('/owner', ownerRouter);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack)
-  res.status(500).send({ error: 'Something went wrong!', message: err.message })
-})
+  console.error(err.stack);
+  res.status(500).send({ error: 'Something went wrong!', message: err.message });
+});
 
 // For Vercel serverless functions, we need to export the app
 // Vercel will handle listening

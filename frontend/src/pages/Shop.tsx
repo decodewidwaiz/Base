@@ -36,7 +36,8 @@ const Shop = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
+        // For public endpoints like product listing, we don't need credentials
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP, false);
         if (!response.ok) {
           throw new Error('Failed to fetch products');
         }

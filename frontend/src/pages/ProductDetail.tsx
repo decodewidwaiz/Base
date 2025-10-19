@@ -38,7 +38,8 @@ const ProductDetail = () => {
     const fetchProduct = async () => {
       try {
         setLoading(true);
-        const response = await apiClient.get(API_ENDPOINTS.PRODUCT_DETAILS(id || ''));
+        // For public endpoints like product details, we don't need credentials
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCT_DETAILS(id || ''), false);
         if (!response.ok) {
           throw new Error('Failed to fetch product');
         }
@@ -63,7 +64,8 @@ const ProductDetail = () => {
 
     const fetchRecommendations = async (category: string, currentId: string) => {
       try {
-        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP);
+        // For public endpoints like product recommendations, we don't need credentials
+        const response = await apiClient.get(API_ENDPOINTS.PRODUCTS_SHOP, false);
         if (response.ok) {
           const data = await response.json();
           const filtered = data

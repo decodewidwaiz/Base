@@ -53,7 +53,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.USER_LOGIN, { email, password });
+      // For authentication endpoints, we need to include credentials
+      const response = await apiClient.post(API_ENDPOINTS.USER_LOGIN, { email, password }, true);
 
       const data = await response.json();
 
@@ -84,7 +85,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const signup = async (email: string, password: string, name: string) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.USER_REGISTER, { fullname: name, email, password });
+      // For authentication endpoints, we need to include credentials
+      const response = await apiClient.post(API_ENDPOINTS.USER_REGISTER, { fullname: name, email, password }, true);
 
       const data = await response.json();
 
@@ -115,7 +117,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const adminLogin = async (email: string, password: string) => {
     try {
-      const response = await apiClient.post(API_ENDPOINTS.OWNER_LOGIN, { email, password });
+      // For authentication endpoints, we need to include credentials
+      const response = await apiClient.post(API_ENDPOINTS.OWNER_LOGIN, { email, password }, true);
 
       const data = await response.json();
 
@@ -133,8 +136,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         return { success: false, error: data.error || 'Admin login failed' };
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Admin login error:', error);
+      
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        return { success: false, error: 'Network connection failed. Please check your internet connection and try again.' };
+      }
+      
       return { success: false, error: 'Network error. Please try again.' };
     }
   };
@@ -146,8 +155,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         ? API_ENDPOINTS.OWNER_LOGOUT 
         : API_ENDPOINTS.USER_LOGOUT;
       
-      // Call backend logout endpoint
-      await apiClient.post(logoutEndpoint);
+      // Call backend logout endpoint with credentials
+      await apiClient.post(logoutEndpoint, undefined, true);
     } catch (error) {
       console.error('Logout error:', error);
     } finally {

@@ -45,23 +45,33 @@ module.exports.register = (req, res) => {
 };
 
 module.exports.login = async (req, res) => {
-  let { email, password } = req.body;
+  try {
+    let { email, password } = req.body;
 
-  let owner = await ownerModel.findOne({ email });
-  if (!owner) {
-    return res.status(400).json({ error: "invalid credentials" });
-  }
-  // comparing the password
-  bcrypt.compare(password, owner.password, function (err, result) {
-    if(result){
+    let owner = await ownerModel.findOne({ email });
+    if (!owner) {
+      return res.status(400).json({ error: "invalid credentials" });
+    }
+    
+    // comparing the password
+    bcrypt.compare(password, owner.password, function (err, result) {
+      if (result) {
         let token = generateToken(owner);
-        res.cookie("token", token);
+        res.cookie("token", token, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'none',
+          maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        });
         res.status(200).json({ message: "Login successful", owner })
-    }
-    else{
-      res.status(400).json({ error: "invalid credentials" });
-    }
-  });
+      } else {
+        res.status(400).json({ error: "invalid credentials" });
+      }
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "An error occurred during login" });
+  }
 };
 
 module.exports.logout = (req, res) => {

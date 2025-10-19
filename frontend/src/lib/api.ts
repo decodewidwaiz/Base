@@ -25,49 +25,69 @@ export const API_ENDPOINTS = {
 };
 
 export const apiClient = {
-  get: async (url: string) => {
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-    return response;
+  get: async (url: string, includeCredentials: boolean = false) => {
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: includeCredentials ? 'include' : 'omit',
+      });
+      return response;
+    } catch (error) {
+      console.error(`Fetch error for ${url}:`, error);
+      throw error;
+    }
   },
   
-  post: async (url: string, data?: any, isFormData: boolean = false) => {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: isFormData ? {} : {
-        'Content-Type': 'application/json',
-      },
-      body: isFormData ? data : JSON.stringify(data),
-      credentials: 'include',
-    });
-    return response;
+  post: async (url: string, data?: any, includeCredentials: boolean = false, isFormData: boolean = false) => {
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: isFormData ? {} : {
+          'Content-Type': 'application/json',
+        },
+        body: isFormData ? data : JSON.stringify(data),
+        credentials: includeCredentials ? 'include' : 'omit',
+      });
+      return response;
+    } catch (error) {
+      console.error(`Fetch error for ${url}:`, error);
+      throw error;
+    }
   },
   
-  put: async (url: string, data?: any) => {
-    const response = await fetch(url, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-      credentials: 'include',
-    });
-    return response;
+  put: async (url: string, data?: any, includeCredentials: boolean = false) => {
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+        credentials: includeCredentials ? 'include' : 'omit',
+      });
+      return response;
+    } catch (error) {
+      console.error(`Fetch error for ${url}:`, error);
+      throw error;
+    }
   },
   
-  delete: async (url: string) => {
-    const response = await fetch(url, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-    });
-    return response;
+  delete: async (url: string, includeCredentials: boolean = false) => {
+    try {
+      const response = await fetch(url, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: includeCredentials ? 'include' : 'omit',
+      });
+      return response;
+    } catch (error) {
+      console.error(`Fetch error for ${url}:`, error);
+      throw error;
+    }
   },
 };
