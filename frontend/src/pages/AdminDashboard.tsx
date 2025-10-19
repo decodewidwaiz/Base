@@ -115,7 +115,7 @@ const AdminDashboard = () => {
   const stats = [
     {
       title: "Total Revenue",
-      value: `$${totalRevenue.toFixed(2)}`,
+      value: `₹${totalRevenue.toFixed(2)}`,
       icon: DollarSign,
       color: "text-green-600",
     },
@@ -419,7 +419,7 @@ const AdminDashboard = () => {
                         {product.name}
                       </TableCell>
                       <TableCell>{product.category}</TableCell>
-                      <TableCell>${product.price.toFixed(2)}</TableCell>
+                      <TableCell>₹{product.price.toFixed(2)}</TableCell>
                       <TableCell>{product.stock}</TableCell>
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-2">
@@ -480,7 +480,7 @@ const AdminDashboard = () => {
                 <div>
                   <Label className="text-muted-foreground">Total Amount</Label>
                   <p className="font-bold text-primary text-lg">
-                    ${selectedOrder.total.toFixed(2)}
+                    ₹{selectedOrder.total.toFixed(2)}
                   </p>
                 </div>
               </div>
@@ -532,7 +532,7 @@ const AdminDashboard = () => {
                         </div>
                       </div>
                       <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
+                        ₹{(item.price * item.quantity).toFixed(2)}
                       </p>
                     </div>
                   ))}

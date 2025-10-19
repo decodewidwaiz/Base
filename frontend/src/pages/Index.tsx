@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Header } from '@/components/Header';
 import { useEffect, useState } from 'react';
+// import { img } from '../../images/hero.jpg';
 
 const Index = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -23,7 +24,7 @@ const Index = () => {
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
           style={{
-            backgroundImage: `/images/heroimage.jpeg`,
+            backgroundImage: `/images/hero.jpg`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat'
