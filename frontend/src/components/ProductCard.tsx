@@ -58,26 +58,26 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <Link to={`/product/${product._id}`}>
       <Card 
-        // Updated Card Background and Border to match the theme
-        className="overflow-hidden transition-all hover:shadow-xl h-full bg-amber-50 border border-amber-200"
+        // Sharp edges, no border on card itself
+        className="transition-all hover:shadow-xl h-full bg-amber-50 rounded-none"
       >
-        <div className="aspect-square overflow-hidden">
+        <div className="aspect-square p-4">
           <img
             src={product.image?.url || '/placeholder-image.jpg'}
             alt={product.name}
-            className="h-full w-full object-cover transition-transform hover:scale-105"
+            className="h-full w-full object-cover transition-transform hover:scale-105 border-8 border-amber-100"
           />
         </div>
         <CardContent className="p-4 flex flex-col h-32">
-          {/* Updated Product Name text color */}
-          <h3 className="font-semibold text-lg mb-1 line-clamp-1 text-amber-900">
+          {/* Sharp, aligned text */}
+          <h3 className="font-bold text-lg mb-2 line-clamp-1 text-amber-900 tracking-tight">
             {product.name}
           </h3>
-          {/* Added Description text color - only show one line */}
+          {/* Description with consistent spacing */}
           <p className="text-sm line-clamp-1 mb-2 text-amber-700">
             {product.description}
           </p>
-          {/* Updated Price text color for emphasis */}
+          {/* Price aligned to bottom */}
           <p className="text-2xl font-bold text-amber-800 mt-auto">
             ₹{product.price}
           </p>
@@ -85,9 +85,8 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         <CardFooter className="p-4 pt-0">
           <Button 
             onClick={handleAddToCart} 
-            className="w-full 
-              // Updated Button style to match the Login button color scheme
-              bg-amber-700 hover:bg-amber-900 text-amber-50 font-semibold
+            className="w-full rounded-none border-2 border-amber-900
+              bg-amber-700 hover:bg-amber-900 text-amber-50 font-bold tracking-wide
             "
           >
             <ShoppingCart className="mr-2 h-4 w-4" />

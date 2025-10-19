@@ -15,18 +15,14 @@ const Cart = () => {
     return (
       <div className="min-h-screen">
         <Header />
-        {/* Themed background for the empty state */}
         <div className="bg-gradient-to-br from-stone-100 via-amber-50 to-stone-100 min-h-[calc(100vh-64px)]">
           <div className="container py-16 text-center">
-            {/* Themed icon color */}
             <ShoppingBag className="h-24 w-24 mx-auto mb-4 text-amber-500" />
-            {/* Themed text colors */}
             <h2 className="text-3xl font-bold mb-2 text-amber-900">Your cart is empty</h2>
             <p className="text-amber-700 mb-6">Add some products to get started</p>
-            {/* Themed primary button */}
             <Button 
               onClick={() => navigate('/shop')}
-              className="bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold shadow-md"
+              className="bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold shadow-md rounded-none"
             >
               Continue Shopping
             </Button>
@@ -40,11 +36,11 @@ const Cart = () => {
   return (
     <div className="min-h-screen">
       <Header />
-      {/* Themed page background */}
       <div className="bg-gradient-to-br from-stone-100 via-amber-50 to-stone-100">
         <div className="container py-12">
-          {/* Themed main title */}
-          <h1 className="text-4xl font-extrabold mb-8 text-amber-900 tracking-tight">Shopping Cart</h1>
+          <h1 className="text-4xl font-extrabold mb-8 text-amber-900 tracking-tight uppercase">
+            Shopping Cart
+          </h1>
           
           <div className="grid lg:grid-cols-3 gap-8">
             
@@ -53,59 +49,59 @@ const Cart = () => {
               {cart.map(item => (
                 <Card 
                   key={item.id} 
-                  // Themed card container
-                  className="bg-amber-50 border border-amber-200 shadow-md"
+                  className="bg-amber-50 border-2 border-amber-300 shadow-md rounded-none"
                 >
-                  <CardContent className="p-4">
-                    <div className="flex gap-4 items-center">
+                  <CardContent className="p-6">
+                    <div className="flex gap-6 items-center">
                       
-                      {/* Image */}
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className="w-24 h-24 object-cover rounded shadow-sm border border-amber-100"
-                      />
+                      {/* Image with border */}
+                      <div className="flex-shrink-0">
+                        <div className="w-32 h-32 p-2 border-4 border-amber-200 bg-white">
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className="w-full h-full object-contain"
+                          />
+                        </div>
+                      </div>
                       
                       <div className="flex-1">
-                        {/* Themed item name and price */}
-                        <h3 className="font-semibold text-lg mb-1 text-amber-900">{item.name}</h3>
-                        <p className="text-amber-800 font-bold text-xl">${item.price}</p>
+                        <h3 className="font-bold text-lg mb-2 text-amber-900 uppercase tracking-tight">
+                          {item.name}
+                        </h3>
+                        <p className="text-amber-700 text-sm mb-2">Size: S</p>
+                        <p className="text-amber-800 font-bold text-2xl">₹{item.price.toLocaleString()}</p>
                       </div>
 
-                      <div className="flex flex-col items-end justify-between h-24">
+                      <div className="flex flex-col items-end justify-between h-32 gap-4">
                         
                         {/* Remove Button */}
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => removeFromCart(item.id)}
-                          // Themed remove button
-                          className="text-amber-600 hover:bg-amber-200 hover:text-red-700 transition-colors"
+                          className="text-amber-700 hover:bg-amber-200 hover:text-amber-900 transition-colors rounded-none border-2 border-amber-200"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-5 w-5" />
                         </Button>
 
                         {/* Quantity Controls */}
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="icon"
+                        <div className="flex items-center border-2 border-amber-300 bg-white">
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                            // Themed quantity buttons
-                            className="border-amber-300 text-amber-800 hover:bg-amber-100"
+                            className="px-3 py-2 hover:bg-amber-100 font-bold text-lg transition-colors text-amber-800"
                           >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                          <span className="w-10 text-center font-bold text-amber-900">{item.quantity}</span>
-                          <Button
-                            variant="outline"
-                            size="icon"
+                            -
+                          </button>
+                          <span className="px-4 py-2 border-x-2 border-amber-300 font-bold min-w-[50px] text-center text-amber-900">
+                            {item.quantity}
+                          </span>
+                          <button
                             onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                            // Themed quantity buttons
-                            className="border-amber-300 text-amber-800 hover:bg-amber-100"
+                            className="px-3 py-2 hover:bg-amber-100 font-bold text-lg transition-colors text-amber-800"
                           >
-                            <Plus className="h-4 w-4" />
-                          </Button>
+                            +
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -114,52 +110,62 @@ const Cart = () => {
               ))}
             </div>
 
-            {/* Order Summary Card */}
-            <div>
-              <Card 
-                className="sticky top-24 
-                  // Themed card container
-                  bg-amber-50 border border-amber-300 shadow-xl"
-              >
-                <CardContent className="p-6">
-                  {/* Themed title */}
-                  <h2 className="text-2xl font-bold mb-6 text-amber-900">Order Summary</h2>
-                  
-                  <div className="space-y-3 mb-6">
-                    <div className="flex justify-between">
-                      {/* Themed secondary text */}
-                      <span className="text-amber-700">Subtotal ({cart.length} items)</span>
-                      {/* Themed value text */}
-                      <span className="font-semibold text-amber-900">${total.toFixed(2)}</span>
+            {/* Order Summary Card - Sticky */}
+            <div className="lg:col-span-1">
+              <div className="sticky top-24">
+                <Card className="bg-white border-2 border-amber-800 shadow-xl rounded-none">
+                  <CardContent className="p-6">
+                    <h2 className="text-2xl font-bold mb-6 text-amber-900 uppercase tracking-tight border-b-2 border-amber-300 pb-4">
+                      Order Summary
+                    </h2>
+                    
+                    <div className="space-y-4 mb-6">
+                      <div className="flex justify-between items-center">
+                        <span className="text-amber-700 font-semibold">Subtotal ({cart.length} items)</span>
+                        <span className="font-bold text-amber-900 text-lg">₹{total.toLocaleString()}</span>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-amber-700 font-semibold">Shipping</span>
+                        <span className="font-bold text-amber-600">Free</span>
+                      </div>
+                      
+                      {/* Free Shipping Progress */}
+                      <div className="pt-4">
+                        <p className="text-sm text-amber-900 mb-2">You are eligible for free shipping.</p>
+                        <div className="w-full h-1 bg-amber-800"></div>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      {/* Themed secondary text */}
-                      <span className="text-amber-700">Shipping</span>
-                      {/* Themed value text */}
-                      <span className="font-semibold text-amber-800">Free</span>
+
+                    <Separator className="my-6 bg-amber-300 h-0.5" />
+
+                    <div className="flex justify-between items-center mb-8 py-4 bg-amber-50 px-4 border-2 border-amber-300">
+                      <span className="text-xl font-extrabold text-amber-900 uppercase">Total</span>
+                      <span className="text-3xl font-extrabold text-amber-800">₹{total.toLocaleString()}</span>
                     </div>
-                  </div>
 
-                  {/* Themed separator */}
-                  <Separator className="my-6 bg-amber-300" />
+                    <div className="space-y-3">
+                      <button
+                        className="w-full bg-amber-800 hover:bg-amber-900 text-white font-bold py-4 transition-colors uppercase tracking-wide text-sm flex items-center justify-center gap-2 rounded-none"
+                        onClick={() => navigate('/checkout/shipping')}
+                      >
+                        <span>🔒</span>
+                        Check Out
+                      </button>
+                      
+                      <button
+                        className="w-full bg-amber-50 hover:bg-amber-100 text-amber-900 font-bold py-4 border-2 border-amber-800 transition-colors uppercase tracking-wide text-sm rounded-none"
+                        onClick={() => navigate('/cart')}
+                      >
+                        View Cart
+                      </button>
+                    </div>
 
-                  <div className="flex justify-between mb-8">
-                    <span className="text-2xl font-extrabold text-amber-900">Total</span>
-                    {/* Themed total price */}
-                    <span className="text-2xl font-extrabold text-amber-800">${total.toFixed(2)}</span>
-                  </div>
-
-                  {/* Themed primary button */}
-                  <Button 
-                    className="w-full 
-                      bg-amber-800 hover:bg-amber-900 text-amber-50 font-semibold shadow-lg py-3 h-auto" 
-                    size="lg"
-                    onClick={() => navigate('/checkout/shipping')}
-                  >
-                    Proceed to Checkout
-                  </Button>
-                </CardContent>
-              </Card>
+                    <p className="text-xs text-amber-700 text-center mt-4">
+                      Taxes included and shipping calculated at checkout.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           </div>
         </div>
