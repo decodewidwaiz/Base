@@ -34,6 +34,11 @@ export const apiClient = {
         },
         credentials: includeCredentials ? 'include' : 'omit',
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       return response;
     } catch (error) {
       console.error(`Fetch error for ${url}:`, error);
@@ -51,6 +56,11 @@ export const apiClient = {
         body: isFormData ? data : JSON.stringify(data),
         credentials: includeCredentials ? 'include' : 'omit',
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       return response;
     } catch (error) {
       console.error(`Fetch error for ${url}:`, error);
@@ -68,6 +78,11 @@ export const apiClient = {
         body: JSON.stringify(data),
         credentials: includeCredentials ? 'include' : 'omit',
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       return response;
     } catch (error) {
       console.error(`Fetch error for ${url}:`, error);
@@ -84,6 +99,11 @@ export const apiClient = {
         },
         credentials: includeCredentials ? 'include' : 'omit',
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       return response;
     } catch (error) {
       console.error(`Fetch error for ${url}:`, error);

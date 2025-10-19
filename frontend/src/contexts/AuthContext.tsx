@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { API_ENDPOINTS, apiClient } from '@/lib/api';
+import { toast } from 'sonner';
 
 interface User {
   id: string;
@@ -77,8 +78,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         return { success: false, error: data.error || 'Login failed' };
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Login error:', error);
+      
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        toast.error('Network connection failed. Please check your internet connection and try again.');
+        return { success: false, error: 'Network connection failed. Please check your internet connection and try again.' };
+      }
+      
+      // Handle other errors
+      toast.error('Login failed. Please try again.');
       return { success: false, error: 'Network error. Please try again.' };
     }
   };
@@ -109,8 +119,17 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       } else {
         return { success: false, error: data.error || 'Signup failed' };
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Signup error:', error);
+      
+      // Check if it's a network error
+      if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        toast.error('Network connection failed. Please check your internet connection and try again.');
+        return { success: false, error: 'Network connection failed. Please check your internet connection and try again.' };
+      }
+      
+      // Handle other errors
+      toast.error('Signup failed. Please try again.');
       return { success: false, error: 'Network error. Please try again.' };
     }
   };
@@ -141,9 +160,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       
       // Check if it's a network error
       if (error instanceof TypeError && error.message === 'Failed to fetch') {
+        toast.error('Network connection failed. Please check your internet connection and try again.');
         return { success: false, error: 'Network connection failed. Please check your internet connection and try again.' };
       }
       
+      // Handle other errors
+      toast.error('Admin login failed. Please try again.');
       return { success: false, error: 'Network error. Please try again.' };
     }
   };
@@ -159,6 +181,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       await apiClient.post(logoutEndpoint, undefined, true);
     } catch (error) {
       console.error('Logout error:', error);
+      toast.error('Logout failed. Please try again.');
     } finally {
       // Clear local state regardless of backend call success
       setUser(null);

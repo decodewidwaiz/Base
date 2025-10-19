@@ -24,8 +24,16 @@ module.exports.register = (req, res) => {
 
           // setting up jwt token
           let token = generateToken(owner);
-          // adding cookie in the browser
-          res.cookie("token", token);
+          
+          // Set cookie with proper options for cross-domain requests
+          const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+          };
+          
+          res.cookie("token", token, cookieOptions);
           
           res.status(201).json({
             success: true,
@@ -57,13 +65,24 @@ module.exports.login = async (req, res) => {
     bcrypt.compare(password, owner.password, function (err, result) {
       if (result) {
         let token = generateToken(owner);
-        res.cookie("token", token, {
+        
+        // Set cookie with proper options for cross-domain requests
+        const cookieOptions = {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'none',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
           maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        };
+        
+        res.cookie("token", token, cookieOptions);
+        res.status(200).json({ 
+          message: "Login successful", 
+          owner: {
+            _id: owner._id,
+            fullname: owner.fullname,
+            email: owner.email
+          }
         });
-        res.status(200).json({ message: "Login successful", owner })
       } else {
         res.status(400).json({ error: "invalid credentials" });
       }
@@ -75,6 +94,14 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.logout = (req, res) => {
-  res.cookie("token", "");
-  res.redirect("/");
+  // Clear the token cookie with proper options
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 0 // Expire immediately
+  };
+  
+  res.cookie("token", "", cookieOptions);
+  res.status(200).json({ message: "Logged out successfully" });
 }

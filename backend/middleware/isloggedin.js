@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
 module.exports = async (req, res, next)=>{
+    // Check if token exists in cookies
     if(!req.cookies.token){
         return res.status(401).json({
             success: false,
@@ -10,6 +11,7 @@ module.exports = async (req, res, next)=>{
     }
     
     try{
+        // Verify the token
         let decoded = jwt.verify(req.cookies.token, process.env.JWT_SECRET);
         
         if(!decoded){
@@ -19,6 +21,7 @@ module.exports = async (req, res, next)=>{
             });
         }
         
+        // Find user in database
         let user = await userModel.findOne({email: decoded.email}).select("-password");
         
         if(!user){
@@ -28,12 +31,15 @@ module.exports = async (req, res, next)=>{
             });
         }
         
+        // Attach user to request object
         req.user = user;
         next();
     }catch(err){
+        console.error("Authentication error:", err);
         return res.status(401).json({
             success: false,
-            message: "User not authenticated - Token verification failed"
+            message: "User not authenticated - Token verification failed",
+            error: err.message
         });
     }
 }

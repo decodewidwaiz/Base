@@ -36,8 +36,15 @@ module.exports.register = async (req, res) => {
     // Generate JWT token
     let token = generateToken(newUser);
     
-    // Set cookie
-    res.cookie("token", token);
+    // Set cookie with proper options for cross-domain requests
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+    };
+    
+    res.cookie("token", token, cookieOptions);
     
     res.status(201).json({
       success: true,
@@ -50,31 +57,61 @@ module.exports.register = async (req, res) => {
       token: token
     });
   } catch (error) {
+    console.error("Registration error:", error);
     res.status(500).json({ error: "An error occurred while registering the user" });
   }
 };
 
 module.exports.login = async (req, res) => {
-  let { email, password } = req.body;
+  try {
+    let { email, password } = req.body;
 
-  let user = await userModel.findOne({ email });
-  if (!user) {
-    return res.status(400).json({ error: "invalid credentials" });
-  }
-  // comparing the password
-  bcrypt.compare(password, user.password, function (err, result) {
-    if(result){
+    let user = await userModel.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+    
+    // Comparing the password
+    bcrypt.compare(password, user.password, function (err, result) {
+      if (result) {
         let token = generateToken(user);
-        res.cookie("token", token);
-        res.status(200).json({ message: "Login successful", user })
-    }
-    else{
-      res.status(400).json({ error: "invalid credentials" });
-    }
-  });
+        
+        // Set cookie with proper options for cross-domain requests
+        const cookieOptions = {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+          maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
+        };
+        
+        res.cookie("token", token, cookieOptions);
+        res.status(200).json({ 
+          message: "Login successful", 
+          user: {
+            _id: user._id,
+            fullname: user.fullname,
+            email: user.email
+          }
+        });
+      } else {
+        res.status(400).json({ error: "Invalid credentials" });
+      }
+    });
+  } catch (error) {
+    console.error("Login error:", error);
+    res.status(500).json({ error: "An error occurred during login" });
+  }
 };
 
 module.exports.logout = (req, res) => {
-  res.cookie("token", "");
-  res.redirect("/");
+  // Clear the token cookie with proper options
+  const cookieOptions = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    maxAge: 0 // Expire immediately
+  };
+  
+  res.cookie("token", "", cookieOptions);
+  res.status(200).json({ message: "Logged out successfully" });
 }
